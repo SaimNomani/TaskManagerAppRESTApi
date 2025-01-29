@@ -31,7 +31,7 @@ const auth = async (req, res, next) => {
   } catch (err) {
     // If an error occurs (e.g., token is invalid, expired, or user not found):
     // - Respond with a 503 status and an error message indicating authentication is required.
-    res.status(503).send({ err: "Please authenticate." });
+    res.status(401).send({ err: "Please authenticate." });
   }
 };
 

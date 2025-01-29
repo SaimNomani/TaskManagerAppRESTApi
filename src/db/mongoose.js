@@ -5,13 +5,18 @@
 
 import mongoose from "mongoose";
 
-mongoose
-  .connect(process.env.MONGODB_URL, {
-    useNewUrlParser: true,
-    autoIndex: true,
-  })
-  .then(() => console.log(`connected to mongodb server`))
-  .catch((err) => console.log(`error in connecting mongodb server: ${err}`));
+export const connectDB = async function () {
+  try {
+    await mongoose.connect(process.env.MONGODB_URL, {
+      autoIndex: true,
+    });
+    console.log(`connected to mongodb server`);
+  } catch (err) {
+    console.log(`error in connecting mongodb server: ${err}`);
+  }
+};
+
+
 
 // const user1 = new User({ name: "jacob", age: 12 });
 // const user2 = new User({

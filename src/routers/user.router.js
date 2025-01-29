@@ -17,9 +17,9 @@ router.post("/", async (req, res) => {
   const newUser = new User(req.body);
   try {
     const createdUser = await newUser.save();
-    sendWelcome(createdUser.name, createdUser.email)
+    sendWelcome(createdUser.name, createdUser.email);
     const token = await createdUser.generateToken();
-    res.status(201).send({ createdUser, token });
+    res.status(201).send({ user: createdUser, token });
   } catch (err) {
     res.status(400).send(err);
   }
@@ -89,7 +89,7 @@ router.get("/me", auth, async (req, res) => {
 //   }
 // });
 
-router.patch("/:id", async (req, res) => {
+router.patch("/me",auth, async (req, res) => {
   const requestedUpdates = Object.keys(req.body);
   const validUpdates = ["name", "age", "email", "password"];
   const isValidUpdate = requestedUpdates.every((update) =>
@@ -109,11 +109,11 @@ router.patch("/:id", async (req, res) => {
     // This approach is commented out because it bypasses any pre-save middleware that might be defined on the User model (e.g., password hashing).
     // We need to handle updates manually to ensure middleware (like password hashing) runs correctly.
 
-    const user = await User.findById(req.params.id); // Fetch the user first by ID
-    // console.log(user)
+    // const user = await User.findById(req.params.id); // Fetch the user first by ID
+    const user = req.user; 
 
     // If the user is not found, return a 404 status code indicating the resource doesn't exist
-    if (!user) return res.status(404).send();
+    // if (!user) return res.status(404).send();
 
     // 'requestedUpdates' is assumed to be an array of fields that should be updated in the user document
     // Loop through the requested updates and update each field of the user object
@@ -153,7 +153,7 @@ router.delete("/me", auth, async (req, res) => {
     // Call `deleteOne()` on the user document to delete it from the database.
     // This method is a Mongoose document method that removes the document from the database.
     await req.user.deleteOne();
-    sendCancellation(req.user.name, req.user.email)
+    sendCancellation(req.user.name, req.user.email);
 
     // Send the removed user data back as the response (could include information about the deleted user).
     res.send(req.user);
